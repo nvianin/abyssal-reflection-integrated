@@ -66,8 +66,8 @@ class GPUParticles {
 
         this.points = new THREE.Points(
             new THREE.PlaneGeometry(
-                xSize * 2,
-                ySize * 2,
+                xSize * 4,
+                ySize * 4,
                 number - 1,
                 number - 1
             ),

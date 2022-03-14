@@ -5,6 +5,8 @@ uniform float time;
 void main() {
    gl_FragColor = vec4(0, 1.0, 0, 1.0);
    float d = 1. - wuv.z;
+   d -= .2;
    gl_FragColor = vec4(vec3(.2 * d, .6 * d, 1. * d), 1.);
+   /* gl_FragColor = vec4(vec3(d), 1.); */
    /* gl_FragColor = vec4(float(int(time * 10.))); */
 }

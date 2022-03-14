@@ -35,7 +35,9 @@ mediaPipe.on("setup", () => {
 //     stats.showPanel(0); */
 // }
 
-const pops = ["pop1.wav", "pop2.ogg", "pop3.ogg", "brush1.wav", "brush2.wav"].map(fileName => {
+let pops = ["pop1.wav", "pop2.ogg", "pop3.ogg", "ploof.mp3"]
+pops = pops.concat(pops);
+pops = pops.map(fileName => {
     return createAudio(fileName);
 })
 
@@ -496,7 +498,7 @@ export class App {
                 }
             }
 
-            console.log(trackers.length)
+            /* console.log(trackers.length) */
             return trackers;
         }
         let prevVisibility = 0;
@@ -647,7 +649,7 @@ export class App {
         bg.position.z = -100
         this.scene.add(bg)
 
-        this.particles = new GPUParticles(96);
+        this.particles = new GPUParticles(128);
 
         if (!debug) {
             this.scene.add(this.particles.points)
@@ -782,7 +784,9 @@ export class App {
                 }
                 this.prevState = "no bueno"
                 for (let i = 0; i < tracker_amount; i++) {
-                    this.boid_handler.app.set_goal(i, 0, i / tracker_amount * 2, -(i / tracker_amount) * 3 - 1);
+                    setTimeout(() => {
+                        this.boid_handler.app.set_goal(i, 0, i / tracker_amount * 2, -(i / tracker_amount) * 15 - 1);
+                    }, i * 20)
                 }
                 goal = lerp(goal, .1, .1);
                 /* log(goal) */
