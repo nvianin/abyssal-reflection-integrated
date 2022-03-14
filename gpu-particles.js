@@ -119,8 +119,8 @@ class GPUParticles {
         }
         /* log(this.gpu_noise(this.positions, .01, this.clock.getElapsedTime())) */
 
-        this.worker = new Worker("worker.js")
-        this.newData = []
+        /* this.worker = new Worker("worker.js")
+        this.newData = [] */
         // this.worker.addEventListener("message", e => {
         //     switch (e.data.cmd) {
         //         case "update":

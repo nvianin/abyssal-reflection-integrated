@@ -11,6 +11,7 @@ import {
     delay
 } from './js/utils.js'
 
+
 const mediaPipe = new MediaPipeClient();
 window.mediaPipe = mediaPipe
 let app;
@@ -34,7 +35,7 @@ mediaPipe.on("setup", () => {
 //     stats.showPanel(0); */
 // }
 
-const pops = ["pop1.wav", "pop2.ogg", "pop3.ogg"].map(fileName => {
+const pops = ["pop1.wav", "pop2.ogg", "pop3.ogg", "brush1.wav", "brush2.wav"].map(fileName => {
     return createAudio(fileName);
 })
 
@@ -70,7 +71,21 @@ let SETTINGS = {
 
 let number = 1500;
 let initialized = false;
-let tracker_amount = 69;
+let tracker_amount = 79;
+
+// TRACKERS DEBUG
+let debug = false;
+let tracker_numbers = []
+let font;
+
+if (debug) {
+    for (let i = 0; i < tracker_amount; i++) {
+        tracker_numbers.push(document.createElement("div"));
+        tracker_numbers[i].className = "debug_tracker"
+        tracker_numbers[i].textContent = i
+        document.body.appendChild(tracker_numbers[i])
+    }
+}
 
 /* let synths = []
 let freqs = []
@@ -199,7 +214,7 @@ let modelList = []
 let rawTrackers = []
 
 let offsets = []
-for (let i = 0; i < 69; i++) {
+for (let i = 0; i < tracker_amount; i++) {
     let sc = .125
     offsets[i] = {
         x: Math.random() * sc,
@@ -461,11 +476,27 @@ export class App {
         }
         this.makeFakeTrackers = (trackers) => {
             for (let subdiv of this.subdivision_indices) {
-                for (let addendum of this.subdivide(trackers, subdiv[0], subdiv[1], 3)) {
+                let subdiv_amt = 3;
+                if (subdiv[3]) subdiv_amt = subdiv[3]
+                for (let addendum of this.subdivide(trackers, subdiv[0], subdiv[1], subdiv_amt)) {
                     trackers.push(addendum);
                 }
             }
-            /* log(trackers.length) */
+
+            let more_trackers = [
+                [38, 44, 3],
+                [37, 43, 3],
+                [36, 42, 3],
+                [9, 34, 1]
+
+            ]
+            for (let sub of more_trackers) {
+                for (let addendum of this.subdivide(trackers, sub[0], sub[1], sub[2])) {
+                    trackers.push(addendum);
+                }
+            }
+
+            console.log(trackers.length)
             return trackers;
         }
         let prevVisibility = 0;
@@ -603,8 +634,9 @@ export class App {
         rect4.position.z = 8
         this.scene.add(rect4)
 
-
-        this.fog = new THREE.Fog( /* 0x08070f */ 0x100e1c, 4.3, 6)
+        if (!debug) {
+            this.fog = new THREE.Fog( /* 0x08070f */ 0x100e1c, 4.3, 6)
+        }
         this.scene.fog = this.fog
         let bg = new THREE.Mesh(
             new THREE.PlaneGeometry(1000, 1000),
@@ -616,7 +648,10 @@ export class App {
         this.scene.add(bg)
 
         this.particles = new GPUParticles(96);
-        this.scene.add(this.particles.points)
+
+        if (!debug) {
+            this.scene.add(this.particles.points)
+        }
 
         /* let ambientlight = new THREE.AmbientLight("#AAAAFF", .02); */
         let ambientlight = new THREE.AmbientLight("#AAAAFF", .3);
@@ -724,6 +759,7 @@ export class App {
             this.scene.add(tracker);
             this.landmark_trackers.push(tracker)
         }
+
         // Boid world
 
         this.boid_handler = new boid_handler(number, this.scene, modelList, tracker_amount);
@@ -872,6 +908,8 @@ export class App {
                 }
             }
 
+
+
             stats.end();
             requestAnimationFrame(render);
         }
@@ -978,6 +1016,13 @@ export class App {
                     this.landmark_trackers[i].goal.x = SETTINGS.invert_x ? 1 - l.y : l.y /* * SETTINGS.invert_x ? -1 : 1 */ ;
                     this.landmark_trackers[i].goal.y = l.z /* * SETTINGS.invert_y ? -1 : 1 */ ;
                     this.landmark_trackers[i].goal.z = l.x - 5 /* * SETTINGS.invert_z ? -1 : 1 */ ;
+
+                    if (debug) {
+                        /* for (let i = 0; i < tracker_amount; i++) { */
+                        tracker_numbers[i].style.right = (l.x + 1) * innerWidth / 4 + "px";
+                        tracker_numbers[i].style.top = (l.y + 1) * innerWidth / 4 + "px";
+                        /* } */
+                    }
 
                     tally.add(new THREE.Vector3(l.x, l.y, l.z));
 
