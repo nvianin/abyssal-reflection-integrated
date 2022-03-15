@@ -35,7 +35,8 @@ mediaPipe.on("setup", () => {
 //     stats.showPanel(0); */
 // }
 
-let pops = ["pop1.wav", "pop2.ogg", "pop3.ogg", "ploof.mp3"]
+/* let pops = ["pop1.wav", "pop2.ogg", "pop3.ogg", "ploof.mp3"] */
+let pops = ["ploof.mp3", "woosh1.wav", "woosh2.wav", "woosh3.wav", "woosh4.wav"]
 pops = pops.concat(pops);
 pops = pops.map(fileName => {
     return createAudio(fileName);
@@ -801,7 +802,7 @@ export class App {
                         for (let i = 0; i < 120 * Math.random(); i++) {
                             let bubble_cb = () => {
                                 setTimeout(() => {
-                                    pop.volume = Math.random() * .5 + .5
+                                    pop.volume = Math.random() * .5 + .2
                                     pop.play()
 
                                 }, Math.random() * 7500 + 333)
@@ -826,6 +827,7 @@ export class App {
         // Render loop
 
         this.colorOffset = Math.random() * 100
+        this.first_set_positions = false;
 
         this.still_indicator = document.getElementById("still")
         this.frame = 0;
@@ -878,6 +880,12 @@ export class App {
             //     i++;
             //     /* log(this.landmark_trackers[i].position == ll.position, ll.position) */
             // }
+            if (!this.first_set_positions && this.boid_handler.app) {
+                for (let i = 0; i < tracker_amount; i++) {
+                    this.boid_handler.app.set_goal(i, 0, i / tracker_amount * 2, -(i / tracker_amount) * 15 - 1);
+                }
+                this.first_set_positions = true;
+            }
             try {
                 this.boid_handler.step();
             } catch (e) {
